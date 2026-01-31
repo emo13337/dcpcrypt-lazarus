@@ -1,0 +1,242 @@
+# DCPcrypt CI/CD Pipeline
+# Builds and tests on Linux, Windows and macOS
+
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:  # Manual trigger
+
+permissions:
+  contents: write  # Required for creating releases
+
+env:
+  LAZARUS_VERSION: stable
+  FPCFLAGS: -Mdelphi -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests
+
+jobs:
+  build-and-test:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            exe: ''
+          - os: windows-latest
+            platform: windows
+            exe: '.exe'
+          - os: macos-latest
+            platform: macos
+            exe: ''
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ========== Lazarus Setup ==========
+      - name: Setup Lazarus
+        uses: gcarreno/setup-lazarus@v3
+        with:
+          lazarus-version: ${{ env.LAZARUS_VERSION }}
+
+      # ========== Build Tests ==========
+      - name: Build tests
+        shell: bash
+        run: |
+          echo "==============================================================================="
+          echo "Building DCPcrypt tests..."
+          echo "==============================================================================="
+          echo ""
+          fail=0
+          for test in test_hashes test_ciphers test_block_modes test_base64 test_stream_encrypt; do
+            echo ">>> Compiling $test.lpr ..."
+            if fpc ${{ env.FPCFLAGS }} tests/$test.lpr > /dev/null 2>&1; then
+              echo "  [OK] $test"
+            else
+              echo "  [FAIL] $test"
+              fpc ${{ env.FPCFLAGS }} tests/$test.lpr 2>&1 | tail -20
+              fail=$((fail + 1))
+            fi
+            echo ""
+          done
+          if [ $fail -ne 0 ]; then
+            echo "[FAIL] $fail program(s) failed to compile."
+            exit 1
+          fi
+          echo "[OK] All test programs compiled!"
+
+      # ========== Run Tests ==========
+      - name: Run tests
+        shell: bash
+        run: |
+          echo ""
+          echo "==============================================================================="
+          echo "Running DCPcrypt tests..."
+          echo "==============================================================================="
+          pass=0; fail=0; total=0
+          for test in test_hashes test_ciphers test_block_modes test_base64 test_stream_encrypt; do
+            total=$((total + 1))
+            echo ""
+            echo ">>> $test"
+            echo "-------------------------------------------------------------------------------"
+            if tests/${test}${{ matrix.exe }}; then
+              pass=$((pass + 1))
+            else
+              fail=$((fail + 1))
+            fi
+          done
+          echo ""
+          echo "==============================================================================="
+          echo "Suite Summary: $pass/$total passed, $fail failed"
+          echo "==============================================================================="
+          if [ $fail -ne 0 ]; then exit 1; fi
+
+  # Build examples to ensure they compile
+  build-examples:
+    name: Build Examples (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: build-and-test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: macos
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk2.0-0 libgtk2.0-dev
+
+      - name: Setup Lazarus
+        uses: gcarreno/setup-lazarus@v3
+        with:
+          lazarus-version: ${{ env.LAZARUS_VERSION }}
+
+      - name: Build console examples
+        shell: bash
+        run: |
+          echo "=== Building console examples ==="
+          fail=0
+          for lpr in examples/console/demo_encrypt_string.lpr examples/console/demo_file_encrypt.lpr; do
+            name=$(basename "$lpr" .lpr)
+            echo "  Building: $name"
+            if fpc -Mdelphi -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes "$lpr" > /dev/null 2>&1; then
+              echo "    [OK]"
+            else
+              echo "    [FAIL]"
+              fpc -Mdelphi -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes "$lpr" 2>&1 | tail -10
+              fail=$((fail + 1))
+            fi
+          done
+          if [ $fail -ne 0 ]; then exit 1; fi
+          echo "[OK] Console examples built!"
+
+      - name: Build GUI examples
+        shell: bash
+        run: |
+          echo "=== Building GUI examples ==="
+          fail=0
+          for lpi in examples/gui/EncryptStrings/EncryptStringsViaEncryptStream.lpi examples/gui/FileEncrypt/EncryptFileUsingThread.lpi; do
+            name=$(basename "$(dirname "$lpi")")
+            echo "  Building: $name"
+            if lazbuild "$lpi" > /dev/null 2>&1; then
+              echo "    [OK]"
+            else
+              echo "    [FAIL]"
+              lazbuild "$lpi" 2>&1 | tail -10
+              fail=$((fail + 1))
+            fi
+          done
+          if [ $fail -ne 0 ]; then exit 1; fi
+          echo "[OK] GUI examples built!"
+
+  # Release job - triggered on version tags
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-and-test, build-examples]
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: DCPcrypt v${{ steps.version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## DCPcrypt Cryptographic Component Library v${{ steps.version.outputs.VERSION }}
+
+            Lazarus / Free Pascal edition
+
+            ### Installation
+
+            **Option 1 - Packages (IDE)**
+
+            1. Open `src/dcpcrypt.lpk` (runtime) and `src/dcpcrypt_laz.lpk` (design-time) in the Lazarus IDE
+            2. Install them - cipher and hash components appear on the component palette
+
+            **Option 2 - Direct use (no IDE)**
+
+            Add `src/`, `src/Ciphers/` and `src/Hashes/` to your project unit search paths:
+
+            ```bash
+            fpc -Mdelphi -Fupath/to/dcpcrypt-lazarus/src -Fupath/to/dcpcrypt-lazarus/src/Ciphers -Fupath/to/dcpcrypt-lazarus/src/Hashes myprogram.pas
+            ```
+
+            ### Quick Example
+
+            ```pascal
+            uses DCPrijndael, DCPsha256, DCPcrypt2, Classes, SysUtils;
+            var
+              Cipher: TDCP_rijndael;
+            begin
+              Cipher := TDCP_rijndael.Create(nil);
+              Cipher.InitStr('my passphrase', TDCP_sha256);
+              WriteLn(Cipher.EncryptString('Hello World'));
+              Cipher.Burn;
+              Cipher.Free;
+            end.
+            ```
+
+            ### Documentation
+
+            - [README](docs/README.md) - Full documentation
+            - [Ciphers API](docs/Ciphers.md) - TDCP_cipher reference
+            - [Block Ciphers API](docs/BlockCiphers.md) - TDCP_blockcipher reference
+            - [Hashes API](docs/Hashes.md) - TDCP_hash reference
+
+            ### Requirements
+
+            - Free Pascal 3.2.0+ or Lazarus 2.0+
+            - No external dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
