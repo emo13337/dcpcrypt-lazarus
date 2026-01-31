@@ -1,0 +1,187 @@
+object frmMain: TfrmMain
+  Left = 327
+  Height = 559
+  Top = 112
+  Width = 885
+  Caption = 'Encrypt strings using EncryptStream'
+  ClientHeight = 559
+  ClientWidth = 885
+  Constraints.MinHeight = 480
+  Constraints.MinWidth = 600
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '3.6.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 210
+    Top = 0
+    Width = 885
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 210
+    ClientWidth = 885
+    TabOrder = 0
+    object grpOptions: TGroupBox
+      Left = 8
+      Height = 193
+      Top = 8
+      Width = 545
+      Caption = ' Options '
+      ClientHeight = 173
+      ClientWidth = 541
+      TabOrder = 0
+      object lblCipher: TLabel
+        Left = 16
+        Height = 17
+        Top = 16
+        Width = 40
+        Caption = 'Cipher:'
+      end
+      object cbxCipher: TComboBox
+        Left = 16
+        Height = 25
+        Top = 36
+        Width = 240
+        DropDownCount = 16
+        OnChange = cbxCipherChange
+        Style = csDropDownList
+        TabOrder = 0
+      end
+      object lblHash: TLabel
+        Left = 280
+        Height = 17
+        Top = 16
+        Width = 32
+        Caption = 'Hash:'
+      end
+      object cbxHash: TComboBox
+        Left = 280
+        Height = 25
+        Top = 36
+        Width = 240
+        DropDownCount = 16
+        OnChange = cbxCipherChange
+        Style = csDropDownList
+        TabOrder = 1
+      end
+      object lblKeySize: TLabel
+        Left = 16
+        Height = 17
+        Top = 76
+        Width = 97
+        Caption = 'Effective key size:'
+      end
+      object dblKeySize: TLabel
+        Left = 130
+        Height = 17
+        Top = 76
+        Width = 5
+        Caption = ' '
+      end
+      object lblPassphrase: TLabel
+        Left = 16
+        Height = 17
+        Top = 108
+        Width = 68
+        Caption = 'Passphrase:'
+      end
+      object boxPassphrase: TEdit
+        Left = 16
+        Height = 25
+        Top = 128
+        Width = 504
+        EchoMode = emPassword
+        OnChange = boxPassphraseChange
+        PasswordChar = '*'
+        TabOrder = 2
+      end
+    end
+    object btnEncrypt: TButton
+      Left = 568
+      Height = 33
+      Top = 16
+      Width = 130
+      Caption = 'Encrypt'
+      Enabled = False
+      OnClick = btnEncryptClick
+      TabOrder = 1
+    end
+    object btnDecrypt: TButton
+      Left = 568
+      Height = 33
+      Top = 56
+      Width = 130
+      Caption = 'Decrypt'
+      Enabled = False
+      OnClick = btnDecryptClick
+      TabOrder = 2
+    end
+    object btn_Copy: TButton
+      Left = 568
+      Height = 33
+      Top = 96
+      Width = 130
+      Caption = 'Copy'
+      OnClick = btn_CopyClick
+      TabOrder = 3
+    end
+    object btn_Paste: TButton
+      Left = 568
+      Height = 33
+      Top = 136
+      Width = 130
+      Caption = 'Paste'
+      OnClick = btn_PasteClick
+      TabOrder = 4
+    end
+    object btnClose: TButton
+      Left = 568
+      Height = 33
+      Top = 176
+      Width = 130
+      Caption = 'Close'
+      OnClick = btnCloseClick
+      TabOrder = 5
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 316
+    Top = 210
+    Width = 885
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 316
+    ClientWidth = 885
+    TabOrder = 1
+    object Memo1: TMemo
+      Left = 0
+      Height = 316
+      Top = 0
+      Width = 885
+      Align = alClient
+      ScrollBars = ssBoth
+      TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 33
+    Top = 526
+    Width = 885
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 885
+    TabOrder = 2
+    object Progress: TProgressBar
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 885
+      Align = alClient
+      TabOrder = 0
+    end
+  end
+end
