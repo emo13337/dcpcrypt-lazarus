@@ -1,5 +1,5 @@
 # DCPcrypt CI/CD Pipeline
-# Builds and tests on Linux, Windows and macOS
+# Builds and tests on Linux using a Docker image with Lazarus pre-installed
 
 name: CI
 
@@ -15,186 +15,37 @@ on:
 permissions:
   contents: write  # Required for creating releases
 
-env:
-  LAZARUS_VERSION: stable
-  FPCFLAGS: -Mdelphi -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests
-
 jobs:
   build-and-test:
-    name: Build & Test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            platform: linux
-            exe: ''
-          - os: windows-latest
-            platform: windows
-            exe: '.exe'
-          - os: macos-latest
-            platform: macos
-            exe: ''
+    name: Build & Test (Linux)
+    runs-on: ubuntu-latest
+    container: wimmercg/lazarus-docker:1.2.0
 
     steps:
+      - name: Install build tools
+        run: |
+          apt-get update
+          apt-get install -y make git
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ========== Dependencies ==========
-      - name: Install dependencies (Linux)
-        if: matrix.platform == 'linux'
+      - name: Verify FPC and Lazarus
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libgtk2.0-0 \
-            libgtk2.0-dev
+          fpc -iV
+          lazbuild --version || lazbuildl64 --version || true
 
-      - name: Check environment (Windows)
-        if: matrix.platform == 'windows'
-        shell: bash
-        run: |
-          echo "No additional dependencies required"
+      - name: Build and run tests
+        run: make check
 
-      - name: Check environment (macOS)
-        if: matrix.platform == 'macos'
-        run: |
-          echo "No additional dependencies required"
-
-      # ========== Lazarus Setup ==========
-      - name: Setup Lazarus
-        uses: gcarreno/setup-lazarus@v3
-        with:
-          lazarus-version: ${{ env.LAZARUS_VERSION }}
-
-      # ========== Build Tests ==========
-      - name: Build tests
-        shell: bash
-        run: |
-          echo "==============================================================================="
-          echo "Building DCPcrypt tests..."
-          echo "==============================================================================="
-          echo ""
-          fail=0
-          for test in test_hashes test_ciphers test_block_modes test_base64 test_stream_encrypt; do
-            echo ">>> Compiling $test.lpr ..."
-            if fpc ${{ env.FPCFLAGS }} tests/$test.lpr > /dev/null 2>&1; then
-              echo "  [OK] $test"
-            else
-              echo "  [FAIL] $test"
-              fpc ${{ env.FPCFLAGS }} tests/$test.lpr 2>&1 | tail -20
-              fail=$((fail + 1))
-            fi
-            echo ""
-          done
-          if [ $fail -ne 0 ]; then
-            echo "[FAIL] $fail program(s) failed to compile."
-            exit 1
-          fi
-          echo "[OK] All test programs compiled!"
-
-      # ========== Run Tests ==========
-      - name: Run tests
-        shell: bash
-        run: |
-          echo ""
-          echo "==============================================================================="
-          echo "Running DCPcrypt tests..."
-          echo "==============================================================================="
-          pass=0; fail=0; total=0
-          for test in test_hashes test_ciphers test_block_modes test_base64 test_stream_encrypt; do
-            total=$((total + 1))
-            echo ""
-            echo ">>> $test"
-            echo "-------------------------------------------------------------------------------"
-            if tests/${test}${{ matrix.exe }}; then
-              pass=$((pass + 1))
-            else
-              fail=$((fail + 1))
-            fi
-          done
-          echo ""
-          echo "==============================================================================="
-          echo "Suite Summary: $pass/$total passed, $fail failed"
-          echo "==============================================================================="
-          if [ $fail -ne 0 ]; then exit 1; fi
-
-  # Build examples to ensure they compile
-  build-examples:
-    name: Build Examples (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    needs: build-and-test
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            platform: linux
-          - os: windows-latest
-            platform: windows
-          - os: macos-latest
-            platform: macos
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install dependencies (Linux)
-        if: matrix.platform == 'linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk2.0-0 libgtk2.0-dev
-
-      - name: Setup Lazarus
-        uses: gcarreno/setup-lazarus@v3
-        with:
-          lazarus-version: ${{ env.LAZARUS_VERSION }}
-
-      - name: Build console examples
-        shell: bash
-        run: |
-          echo "=== Building console examples ==="
-          fail=0
-          for lpr in examples/console/demo_encrypt_string.lpr examples/console/demo_file_encrypt.lpr; do
-            name=$(basename "$lpr" .lpr)
-            echo "  Building: $name"
-            if fpc -Mdelphi -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes "$lpr" > /dev/null 2>&1; then
-              echo "    [OK]"
-            else
-              echo "    [FAIL]"
-              fpc -Mdelphi -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes "$lpr" 2>&1 | tail -10
-              fail=$((fail + 1))
-            fi
-          done
-          if [ $fail -ne 0 ]; then exit 1; fi
-          echo "[OK] Console examples built!"
-
-      - name: Build GUI examples
-        shell: bash
-        run: |
-          echo "=== Building GUI examples ==="
-          fail=0
-          for lpi in examples/gui/EncryptStrings/EncryptStringsViaEncryptStream.lpi examples/gui/FileEncrypt/EncryptFileUsingThread.lpi; do
-            name=$(basename "$(dirname "$lpi")")
-            echo "  Building: $name"
-            if lazbuild "$lpi" > /dev/null 2>&1; then
-              echo "    [OK]"
-            else
-              echo "    [FAIL]"
-              lazbuild "$lpi" 2>&1 | tail -10
-              fail=$((fail + 1))
-            fi
-          done
-          if [ $fail -ne 0 ]; then exit 1; fi
-          echo "[OK] GUI examples built!"
+      - name: Build examples
+        run: make build-examples
 
   # Release job - triggered on version tags
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [build-and-test, build-examples]
+    needs: [build-and-test]
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
