@@ -1,36 +1,20 @@
-{******************************************************************************}
-{* DCPcrypt v2.0 written by David Barton (crypto@cityinthesky.co.uk) **********}
-{******************************************************************************}
-{* A binary compatible implementation of DES and Triple DES *******************}
-{* Based on C source code by Eric Young ***************************************}
-{******************************************************************************}
-{* Copyright (c) 1999-2002 David Barton                                       *}
-{* Permission is hereby granted, free of charge, to any person obtaining a    *}
-{* copy of this software and associated documentation files (the "Software"), *}
-{* to deal in the Software without restriction, including without limitation  *}
-{* the rights to use, copy, modify, merge, publish, distribute, sublicense,   *}
-{* and/or sell copies of the Software, and to permit persons to whom the      *}
-{* Software is furnished to do so, subject to the following conditions:       *}
-{*                                                                            *}
-{* The above copyright notice and this permission notice shall be included in *}
-{* all copies or substantial portions of the Software.                        *}
-{*                                                                            *}
-{* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR *}
-{* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,   *}
-{* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL    *}
-{* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER *}
-{* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *}
-{* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *}
-{* DEALINGS IN THE SOFTWARE.                                                  *}
-{******************************************************************************}
-{******************************************************************************}
-{*       This implementation of DES is based on the C implementation by       *}
-{*                       Eric Young (eay@mincom.oz.au)                        *}
-{******************************************************************************}
-{*    DES takes a 64bit key and discards every 8th bit (56bit effectively)    *}
-{*    3DES takes either a <= 128bit key and uses one key twice or takes a     *}
-{*     <= 192bit key and uses each once (again discarding every 8th bit)      *}
-{******************************************************************************}
+{===============================================================================
+  DCPcrypt v2.0.5 - A binary compatible implementation of DES and Triple DES
+
+  Based on C implementation by Eric Young (eay@mincom.oz.au).
+  DES takes a 64-bit key and discards every 8th bit (56-bit effectively).
+  3DES takes either a <= 128-bit key (one key used twice) or a <= 192-bit
+  key (each used once, again discarding every 8th bit).
+
+  SPDX-License-Identifier: MIT
+  See LICENSE for full license text.
+
+  Copyright (c) 1999-2003 David Barton (crypto@cityinthesky.co.uk)
+  Copyright (c) 2006 Barko (Lazarus port)
+  Copyright (c) 2009-2010 Graeme Geldenhuys
+  Copyright (c) 2022 Werner Pamler
+  Copyright (c) 2026 Nicolas Deoux (NDXDev@gmail.com)
+===============================================================================}
 unit DCPdes;
 
 {$MODE Delphi}

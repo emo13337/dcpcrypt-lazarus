@@ -1,27 +1,15 @@
-{******************************************************************************}
-{* DCPcrypt v2.0 written by David Barton (crypto@cityinthesky.co.uk) **********}
-{******************************************************************************}
-{* A binary compatible implementation of Misty1 *******************************}
-{******************************************************************************}
-{* Copyright (c) 1999-2002 David Barton                                       *}
-{* Permission is hereby granted, free of charge, to any person obtaining a    *}
-{* copy of this software and associated documentation files (the "Software"), *}
-{* to deal in the Software without restriction, including without limitation  *}
-{* the rights to use, copy, modify, merge, publish, distribute, sublicense,   *}
-{* and/or sell copies of the Software, and to permit persons to whom the      *}
-{* Software is furnished to do so, subject to the following conditions:       *}
-{*                                                                            *}
-{* The above copyright notice and this permission notice shall be included in *}
-{* all copies or substantial portions of the Software.                        *}
-{*                                                                            *}
-{* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR *}
-{* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,   *}
-{* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL    *}
-{* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER *}
-{* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *}
-{* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *}
-{* DEALINGS IN THE SOFTWARE.                                                  *}
-{******************************************************************************}
+{===============================================================================
+  DCPcrypt v2.0.5 - A binary compatible implementation of Misty1
+
+  SPDX-License-Identifier: MIT
+  See LICENSE for full license text.
+
+  Copyright (c) 1999-2003 David Barton (crypto@cityinthesky.co.uk)
+  Copyright (c) 2006 Barko (Lazarus port)
+  Copyright (c) 2009-2010 Graeme Geldenhuys
+  Copyright (c) 2022 Werner Pamler
+  Copyright (c) 2026 Nicolas Deoux (NDXDev@gmail.com)
+===============================================================================}
 unit DCPmisty1;
 
 {$MODE Delphi}
