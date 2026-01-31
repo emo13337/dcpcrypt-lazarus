@@ -42,6 +42,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ========== Dependencies ==========
+      - name: Install dependencies (Linux)
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk2.0-0 \
+            libgtk2.0-dev
+
+      - name: Check environment (Windows)
+        if: matrix.platform == 'windows'
+        shell: bash
+        run: |
+          echo "No additional dependencies required"
+
+      - name: Check environment (macOS)
+        if: matrix.platform == 'macos'
+        run: |
+          echo "No additional dependencies required"
+
       # ========== Lazarus Setup ==========
       - name: Setup Lazarus
         uses: gcarreno/setup-lazarus@v3
