@@ -2,6 +2,7 @@
 
 **Cryptographic Component Library for Free Pascal/Lazarus**
 
+[![CI](https://github.com/NDXDeveloper/dcpcrypt-lazarus/actions/workflows/ci.yml/badge.svg)](https://github.com/NDXDeveloper/dcpcrypt-lazarus/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](src/Docs/MIT_license.txt)
 [![Free Pascal](https://img.shields.io/badge/Free%20Pascal-3.2%2B-orange.svg)](https://www.freepascal.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg)]()
@@ -275,3 +276,16 @@ MIT License - See [LICENSE](src/Docs/MIT_license.txt) for details.
 
 *DCPcrypt is copyrighted by its respective authors.*
 *Released under the MIT license. All trademarks are property of their respective owners.*
+
+---
+
+<div align="center">
+
+[![Star on GitHub](https://img.shields.io/github/stars/NDXDeveloper/dcpcrypt-lazarus?style=social)](https://github.com/NDXDeveloper/dcpcrypt-lazarus)
+[![Follow](https://img.shields.io/github/followers/NDXDeveloper?style=social)](https://github.com/NDXDeveloper)
+
+**[Back to top](#dcpcrypt)**
+
+*Last updated: January 2026 | FPC 3.2.0+*
+
+</div>
