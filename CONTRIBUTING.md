@@ -373,10 +373,10 @@ make check
 
 ### CI Pipeline
 
-The GitHub Actions CI runs:
-1. Build all 5 test programs on Linux, Windows, macOS
-2. Execute all 282 tests on all platforms
-3. Build console and GUI examples on all platforms
+The GitHub Actions CI runs on Linux in a Docker container (`wimmercg/lazarus-docker:1.2.0`):
+1. Build all 5 test programs via `make check`
+2. Execute all 282 tests
+3. Build console and GUI examples via `make build-examples`
 
 All checks must pass before merge.
 

@@ -159,10 +159,10 @@ The test suite contains 5 programs (282 individual checks):
 
 The project uses GitHub Actions for continuous integration. See `.github/workflows/ci.yml`.
 
-Tests and examples build automatically on:
-- Ubuntu (latest)
-- Windows (latest)
-- macOS (latest)
+Tests and examples build automatically on Linux using a Docker container
+with FPC and Lazarus pre-installed (`wimmercg/lazarus-docker:1.2.0`).
+
+See [.github/workflows/README.md](.github/workflows/README.md) for details.
 
 ## Troubleshooting
 

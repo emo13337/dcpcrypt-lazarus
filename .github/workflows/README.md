@@ -17,17 +17,10 @@ flowchart TD
     end
 
     subgraph Stage1[" "]
-        BAT[build-and-test]
-        BAT_U[Ubuntu]
-        BAT_W[Windows]
-        BAT_M[macOS]
+        BAT[build-and-test<br/>Linux Docker container]
     end
 
     subgraph Stage2[" "]
-        BE[build-examples<br/>All platforms]
-    end
-
-    subgraph Stage3[" "]
         REL[release<br/>Only on v* tags]
     end
 
@@ -35,15 +28,7 @@ flowchart TD
     T2 --> BAT
     T3 --> BAT
 
-    BAT --> BAT_U
-    BAT --> BAT_W
-    BAT --> BAT_M
-
-    BAT_U --> BE
-    BAT_W --> BE
-    BAT_M --> BE
-
-    BE --> REL
+    BAT --> REL
 ```
 
 ```
@@ -58,27 +43,11 @@ flowchart TD
 ┌─────────────────────────────────────────────────────────────┐
 │                    build-and-test                            │
 │                                                             │
-│  Runs in PARALLEL on:                                       │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
-│  │   Ubuntu     │ │   Windows   │ │    macOS    │           │
-│  └─────────────┘ └─────────────┘ └─────────────┘           │
+│  Container: wimmercg/lazarus-docker:1.2.0                   │
+│  (Debian 12 slim + FPC 3.2.2 + Lazarus)                    │
 │                                                             │
-│  - Setup Lazarus/FPC compiler                               │
-│  - Build all 5 test programs with fpc                       │
-│  - Execute 282 tests                                        │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          v
-┌─────────────────────────────────────────────────────────────┐
-│                    build-examples                            │
-│                                                             │
-│  Runs in PARALLEL on:                                       │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
-│  │   Ubuntu     │ │   Windows   │ │    macOS    │           │
-│  └─────────────┘ └─────────────┘ └─────────────┘           │
-│                                                             │
-│  - Build 2 console examples with fpc                        │
-│  - Build 2 GUI examples with lazbuild                       │
+│  - make check        (build + run 282 tests)                │
+│  - make build-examples (console + GUI examples)             │
 └─────────────────────────┬───────────────────────────────────┘
                           │
                           v  (only on v* tags)
@@ -93,29 +62,22 @@ flowchart TD
 ### Pipeline Stages
 
 **Stage 1: build-and-test**
-- Runs in parallel on Ubuntu, Windows, and macOS
-- Sets up Lazarus/FPC compiler
-- Builds all 5 test programs using `fpc` with `-Mdelphi` flag
-- Executes all 282 tests
-- No external dependencies required
+- Runs on Ubuntu inside a Docker container with FPC and Lazarus pre-installed
+- Docker image: `wimmercg/lazarus-docker:1.2.0` (Debian 12 slim, FPC 3.2.2, Lazarus from Git sources)
+- Builds and runs all 282 tests via `make check`
+- Builds all examples (console + GUI) via `make build-examples`
+- No SourceForge dependency — the Docker image is built from Git sources
 
-**Stage 2: build-examples**
-- Runs in parallel on Ubuntu, Windows, and macOS
-- Builds 2 console examples with `fpc`
-- Builds 2 GUI examples with `lazbuild` (requires LCL)
-- Linux requires GTK2 development headers for GUI builds
-
-**Stage 3: release**
+**Stage 2: release**
 - Only triggered on version tags (v*)
 - Creates GitHub release with auto-generated notes
 
 ## Jobs Description
 
-| Job | Runs On | Dependencies | Purpose |
-|-----|---------|--------------|---------|
-| `build-and-test` | Ubuntu, Windows, macOS | None | Core build and test validation |
-| `build-examples` | Ubuntu, Windows, macOS | `build-and-test` | Verify all examples compile |
-| `release` | Ubuntu | `build-and-test`, `build-examples` | Create GitHub release (tags only) |
+| Job | Runs On | Container | Dependencies | Purpose |
+|-----|---------|-----------|--------------|---------|
+| `build-and-test` | ubuntu-latest | `wimmercg/lazarus-docker:1.2.0` | None | Build, test, and verify examples |
+| `release` | ubuntu-latest | — | `build-and-test` | Create GitHub release (tags only) |
 
 ## Test Suites
 
@@ -138,34 +100,16 @@ flowchart TD
 | `EncryptStringsViaEncryptStream` | GUI (LCL) | `lazbuild` |
 | `EncryptFileUsingThread` | GUI (LCL) | `lazbuild` |
 
-## Platform Dependencies
+## Docker Image
 
-### Linux (Ubuntu)
+The CI uses [`wimmercg/lazarus-docker:1.2.0`](https://hub.docker.com/r/wimmercg/lazarus-docker) which provides:
 
-```bash
-# GUI examples only
-libgtk2.0-0           # GTK2 runtime
-libgtk2.0-dev         # GTK2 headers (for LCL compilation)
-```
+- **Base**: Debian 12 slim
+- **FPC**: 3.2.2 (compiled from Git tag)
+- **Lazarus**: lazbuild (compiled from Git main branch)
+- **No SourceForge**: everything is built from Git sources
 
-Tests and console examples have no external dependencies.
-
-### Windows
-
-- No additional dependencies
-- FPC produces `.exe` binaries automatically
-
-### macOS
-
-- No additional dependencies
-- LCL uses Cocoa backend
-
-## Environment Variables
-
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `LAZARUS_VERSION` | `stable` | Lazarus/FPC version to install |
-| `FPCFLAGS` | `-Mdelphi -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests` | FPC compiler flags for test programs |
+Source: [ChrisWiGit/lazarus-docker](https://github.com/ChrisWiGit/lazarus-docker)
 
 ## Triggering Workflows
 
@@ -220,8 +164,7 @@ tests/test_hashes
 | Issue | Solution |
 |-------|----------|
 | `Identifier not found: Result` | Ensure `-Mdelphi` flag is used (dcpbase64.pas requires Delphi mode) |
-| Lazarus version mismatch | Ensure `LAZARUS_VERSION` is compatible |
-| GTK2 not found (Linux GUI) | Install `libgtk2.0-dev` |
+| GTK2 not found (GUI examples) | Install `libgtk2.0-dev` locally |
 
 ### Test Failures
 
@@ -235,4 +178,4 @@ tests/test_hashes
 - [docs/README.md](../../docs/README.md) - Project documentation
 - [docs/CHANGELOG.md](../../docs/CHANGELOG.md) - Version history
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [setup-lazarus Action](https://github.com/gcarreno/setup-lazarus)
+- [lazarus-docker](https://github.com/ChrisWiGit/lazarus-docker) - Docker image used in CI
