@@ -18,11 +18,13 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ CAST-128 (CAST5): 64-bit block cipher, 40-128 bit key, 12 or 16 rounds.
+  Designed by C. Adams and S. Tavares (1996). RFC 2144. }
 type
   TDCP_cast128= class(TDCP_blockcipher64)
   protected
-    KeyData: array[0..31] of DWord;
-    Rounds: longword;
+    KeyData: array[0..31] of DWord;  { Round subkeys }
+    Rounds: longword;                { 12 rounds for <= 80-bit keys, 16 for longer }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -35,12 +37,10 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
-{$I DCPcast128.inc}
+{$I DCPcast128.inc}  { S-box constants }
 
 function LRot32(a, n: dword): dword;
 begin

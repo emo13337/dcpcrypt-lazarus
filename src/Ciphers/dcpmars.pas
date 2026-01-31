@@ -18,10 +18,12 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ MARS: 128-bit block cipher, 128-448 bit key, 32 rounds.
+  Designed by IBM (1998). AES candidate. Heterogeneous round structure. }
 type
   TDCP_mars= class(TDCP_blockcipher128)
   protected
-    KeyData: array[0..39] of DWord;
+    KeyData: array[0..39] of DWord;  { 40 expanded subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -34,11 +36,9 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
-{$I DCPmars.inc}
+{$I DCPmars.inc}  { S-box constants }
 
 function LRot32(X: DWord; c: longword): DWord;
 begin

@@ -21,10 +21,13 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ Serpent: 128-bit block cipher, 128-256 bit key, 32 rounds.
+  Designed by Anderson, Biham, Knudsen (1998). AES finalist.
+  Uses 8 different 4-bit S-boxes applied bitslice-style. }
 type
   TDCP_serpent= class(TDCP_blockcipher128)
   protected
-    l_key: array[0..131] of dword;
+    l_key: array[0..131] of dword;  { 33 round keys x 4 dwords = 132 subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -37,8 +40,6 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

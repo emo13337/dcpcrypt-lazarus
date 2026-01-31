@@ -18,10 +18,13 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst;
 
+{ RC4 (ARC4): stream cipher, 8-2048 bit key.
+  Designed by Ron Rivest (1987). Byte-oriented, fast, simple.
+  Note: derives from TDCP_cipher (not blockcipher) as this is a stream cipher. }
 type
   TDCP_rc4= class(TDCP_cipher)
   protected
-    KeyData, KeyOrg: array[0..255] of byte;
+    KeyData, KeyOrg: array[0..255] of byte;  { KeyOrg = initial state, KeyData = working state }
   public
     class function GetID: integer; override;
     class function GetAlgorithm: string; override;
@@ -34,8 +37,6 @@ type
     procedure Decrypt(const InData; var OutData; Size: longword); override;
   end;
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

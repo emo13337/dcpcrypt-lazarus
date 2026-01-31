@@ -18,11 +18,13 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ Blowfish: 64-bit block cipher, 32-448 bit key, 16-round Feistel network.
+  Designed by Bruce Schneier (1993). Fast key-dependent S-boxes. }
 type
   TDCP_blowfish= class(TDCP_blockcipher64)
   protected
-    SBox: array[0..3,0..255] of DWord;
-    PBox: array[0..17] of DWord;
+    SBox: array[0..3,0..255] of DWord;  { Key-dependent substitution boxes }
+    PBox: array[0..17] of DWord;        { Key-dependent permutation array (18 subkeys) }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetId: integer; override;
@@ -38,7 +40,7 @@ type
 implementation
 
 {$R-}{$Q-}
-{$I DCPblowfish.inc}
+{$I DCPblowfish.inc}  { Original S-box and P-box constants }
 
 class function TDCP_blowfish.GetID: integer;
 begin
@@ -55,6 +57,7 @@ begin
   Result:= 448;
 end;
 
+{ Verify implementation against known test vectors. }
 class function TDCP_blowfish.SelfTest: boolean;
 const
   Key1: array[0..7] of byte= ($00,$00,$00,$00,$00,$00,$00,$00);

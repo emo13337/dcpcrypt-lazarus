@@ -18,14 +18,17 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2;
 
-{******************************************************************************}
-    { Base type definition for 64 bit block ciphers }
+{ --- TDCP_blockcipher64 - 64-bit Block Cipher Base -------------------------- }
+{ Implements all block cipher modes for 64-bit (8-byte) block ciphers.
+  IV holds the original initialization vector; CV holds the current chaining value.
+  Used by: Blowfish, Cast128, DES, 3DES, Gost, Ice, IDEA, Misty1, RC2, RC5, TEA. }
+
 type
   TDCP_blockcipher64= class(TDCP_blockcipher)
   private
-    IV, CV: array[0..7] of byte;
+    IV, CV: array[0..7] of byte;  { IV = initial vector, CV = current chaining value }
 
-    procedure IncCounter;
+    procedure IncCounter;  { Increment the counter (big-endian) for CTR mode }
   public
     class function GetBlockSize: integer; override;
       { Get the block size of the cipher (in bits) }
@@ -63,14 +66,17 @@ type
       { Decrypt size bytes of data using the CTR method of decryption }
   end;
 
-{******************************************************************************}
-    { Base type definition for 128 bit block ciphers }
+{ --- TDCP_blockcipher128 - 128-bit Block Cipher Base ------------------------ }
+{ Implements all block cipher modes for 128-bit (16-byte) block ciphers.
+  IV holds the original initialization vector; CV holds the current chaining value.
+  Used by: Rijndael (AES), Cast256, Mars, RC6, Serpent, Twofish. }
+
 type
   TDCP_blockcipher128= class(TDCP_blockcipher)
   private
-    IV, CV: array[0..15] of byte;
+    IV, CV: array[0..15] of byte;  { IV = initial vector, CV = current chaining value }
 
-    procedure IncCounter;
+    procedure IncCounter;  { Increment the counter (big-endian) for CTR mode }
   public
     class function GetBlockSize: integer; override;
       { Get the block size of the cipher (in bits) }
@@ -111,7 +117,7 @@ type
 implementation
 
 
-{** TDCP_blockcipher64 ********************************************************}
+{ --- TDCP_blockcipher64 Implementation -------------------------------------- }
 
 procedure TDCP_blockcipher64.IncCounter;
 var
@@ -131,6 +137,8 @@ begin
   Result:= 64;
 end;
 
+{ If InitVector is nil, generates a deterministic IV by encrypting a zero block.
+  Otherwise, uses the provided IV directly. Then copies IV into CV via Reset. }
 procedure TDCP_blockcipher64.Init(const Key; Size: longword; InitVector: pointer);
 begin
   inherited Init(Key,Size,InitVector);
@@ -442,7 +450,7 @@ begin
   end;
 end;
 
-{** TDCP_blockcipher128 ********************************************************}
+{ --- TDCP_blockcipher128 Implementation ------------------------------------- }
 
 procedure TDCP_blockcipher128.IncCounter;
 var
@@ -462,6 +470,8 @@ begin
   Result:= 128;
 end;
 
+{ If InitVector is nil, generates a deterministic IV by encrypting a zero block.
+  Otherwise, uses the provided IV directly. Then copies IV into CV via Reset. }
 procedure TDCP_blockcipher128.Init(const Key; Size: longword; InitVector: pointer);
 begin
   inherited Init(Key,Size,InitVector);

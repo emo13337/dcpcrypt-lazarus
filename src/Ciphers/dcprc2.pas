@@ -18,10 +18,12 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ RC2: 64-bit block cipher, 8-1024 bit key, 18 rounds (mix + mash).
+  Designed by Ron Rivest (1987). RFC 2268. Variable-length key schedule. }
 type
   TDCP_rc2= class(TDCP_blockcipher64)
   protected
-    KeyData: array[0..63] of word;
+    KeyData: array[0..63] of word;  { 64-word expanded key table }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -34,12 +36,10 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
-{$I DCPrc2.inc}
+{$I DCPrc2.inc}  { Permutation table constant }
 
 function LRot16(a, n: word): word;
 begin

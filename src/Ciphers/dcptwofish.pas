@@ -19,22 +19,25 @@ uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
 const
-  INPUTWHITEN= 0;
-  OUTPUTWHITEN= 4;
-  NUMROUNDS= 16;
-  ROUNDSUBKEYS= (OUTPUTWHITEN + 4);
-  TOTALSUBKEYS= (ROUNDSUBKEYS + NUMROUNDS * 2);
-  RS_GF_FDBK= $14d;
-  MDS_GF_FDBK= $169;
-  SK_STEP= $02020202;
-  SK_BUMP= $01010101;
-  SK_ROTL= 9;
+  INPUTWHITEN= 0;                                 { Subkey index: input whitening }
+  OUTPUTWHITEN= 4;                                { Subkey index: output whitening }
+  NUMROUNDS= 16;                                  { Number of Feistel rounds }
+  ROUNDSUBKEYS= (OUTPUTWHITEN + 4);               { Subkey index: first round key }
+  TOTALSUBKEYS= (ROUNDSUBKEYS + NUMROUNDS * 2);   { Total subkey count (40) }
+  RS_GF_FDBK= $14d;   { Reed-Solomon GF(2^8) feedback polynomial }
+  MDS_GF_FDBK= $169;  { MDS matrix GF(2^8) feedback polynomial }
+  SK_STEP= $02020202;  { Subkey generation step constant }
+  SK_BUMP= $01010101;  { Subkey generation bump constant }
+  SK_ROTL= 9;          { Subkey rotation amount (bits) }
 
+{ Twofish: 128-bit block cipher, 128/192/256-bit key, 16 rounds.
+  Designed by Schneier, Kelsey, Whiting, Wagner, Hall, Ferguson (1998). AES finalist.
+  Uses key-dependent S-boxes and MDS matrix. }
 type
   TDCP_twofish= class(TDCP_blockcipher128)
   protected
-    SubKeys: array[0..TOTALSUBKEYS-1] of DWord;
-    sbox: array[0..3,0..255] of DWord;
+    SubKeys: array[0..TOTALSUBKEYS-1] of DWord;  { 40 subkeys: 8 whitening + 32 round keys }
+    sbox: array[0..3,0..255] of DWord;            { Key-dependent S-boxes }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -48,11 +51,9 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
-{$I DCPtwofish.inc}
+{$I DCPtwofish.inc}  { p8x8 permutation tables for key-dependent S-box construction }
 
 var
   MDS: array[0..3,0..255] of dword;

@@ -19,12 +19,14 @@ uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
 const
-  NUMROUNDS= 12;    { number of rounds must be between 12-16 }
+  NUMROUNDS= 12;  { Number of rounds (valid range: 12-16) }
 
+{ RC5: 64-bit block cipher, 8-2040 bit key, variable rounds (here 12).
+  Designed by Ron Rivest (1994). Simple design using data-dependent rotations. }
 type
   TDCP_rc5= class(TDCP_blockcipher64)
   protected
-    KeyData: array[0..((NUMROUNDS*2)+1)] of DWord;
+    KeyData: array[0..((NUMROUNDS*2)+1)] of DWord;  { 2*rounds+2 subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetId: integer; override;
@@ -37,8 +39,6 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

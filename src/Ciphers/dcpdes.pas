@@ -23,6 +23,7 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ Base class for DES variants. Provides shared key schedule and block operations. }
 type
   TDCP_customdes= class(TDCP_blockcipher64)
   protected
@@ -31,10 +32,12 @@ type
     procedure DecryptBlock(const InData; var OutData; KeyData: PDWordArray);
   end;
 
+{ DES: 64-bit block cipher, 56-bit effective key (64-bit with parity), 16-round Feistel.
+  FIPS 46-3. Considered insecure for modern use; prefer AES or 3DES. }
 type
   TDCP_des= class(TDCP_customdes)
   protected
-    KeyData: array[0..31] of dword;
+    KeyData: array[0..31] of dword;  { 32 subkeys for 16 rounds }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetId: integer; override;
@@ -46,9 +49,11 @@ type
     procedure DecryptECB(const InData; var OutData); override;
   end;
 
+{ Triple DES (3DES/TDES): applies DES three times with 2 or 3 independent keys.
+  112-bit effective key (2-key) or 168-bit (3-key). NIST SP 800-67. }
   TDCP_3des= class(TDCP_customdes)
   protected
-    KeyData: array[0..2,0..31] of dword;
+    KeyData: array[0..2,0..31] of dword;  { Three sets of 32 subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetId: integer; override;
@@ -60,8 +65,6 @@ type
     procedure DecryptECB(const InData; var OutData); override;
   end;
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
@@ -392,7 +395,7 @@ begin
   DecryptBlock(InData,OutData,@KeyData);
 end;
 
-{******************************************************************************}
+{ --- TDCP_3des --- }
 class function TDCP_3des.GetMaxKeySize: integer;
 begin
   Result:= 192;

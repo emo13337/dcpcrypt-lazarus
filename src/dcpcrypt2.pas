@@ -18,10 +18,9 @@ interface
 uses
   Classes, Sysutils, DCPbase64;
 
-//{$DEFINE DCP1COMPAT}  { DCPcrypt v1.31 compatiblity mode - see documentation }
+//{$DEFINE DCP1COMPAT}  { DCPcrypt v1.31 compatibility mode - see documentation }
 
-{******************************************************************************}
-    { A few predefined types to help out }
+{ --- Predefined Types ------------------------------------------------------- }
 
 type
   {$IFNDEF FPC}
@@ -35,14 +34,19 @@ type
   {$ENDIF}
   Pdwordarray= ^Tdwordarray;
   Tdwordarray= array[0..8191] of dword;
+
+  { Callback for progress reporting during stream encryption/decryption.
+    Progress is an integer percentage (0..100). }
   TProgressEvent = procedure(Sender: TObject; Progress: integer) of object;
 
 
-{******************************************************************************}
-    { The base class from which all hash algorithms are to be derived  }
+{ --- TDCP_hash - Base Hash Class -------------------------------------------- }
+{ All hash algorithm implementations derive from this class.
+  Usage: call Init, then Update/UpdateStr/UpdateStream, then Final.
+  The Burn method clears internal state without producing a digest. }
 
 type
-  EDCP_hash= class(Exception);
+  EDCP_hash= class(Exception);  { Exception class for hash errors }
   TDCP_hash= class(TComponent)
   protected
     fInitialized: boolean;  { Whether or not the algorithm has been initialized }
@@ -96,13 +100,15 @@ type
   TDCP_hashclass= class of TDCP_hash;
 
 
-{******************************************************************************}
-    { The base class from which all encryption components will be derived. }
-    { Stream ciphers will be derived directly from this class where as     }
-    { Block ciphers will have a further foundation class TDCP_blockcipher. }
+{ --- TDCP_cipher - Base Cipher Class ---------------------------------------- }
+{ Base class for all encryption components.
+  Stream ciphers derive directly from this class.
+  Block ciphers derive from TDCP_blockcipher (see below).
+  Supports key setup via raw bytes (Init) or passphrase (InitStr).
+  Provides stream and string encryption with progress reporting. }
 
 type
-  EDCP_cipher= class(Exception);
+  EDCP_cipher= class(Exception);  { Exception class for cipher errors }
   TDCP_cipher= class(TComponent)
   protected
     fInitialized: boolean;  { Whether or not the key setup has been done yet }
@@ -171,13 +177,21 @@ type
   TDCP_cipherclass= class of TDCP_cipher;
 
 
-{******************************************************************************}
-    { The base class from which all block ciphers are to be derived, this  }
-    { extra class takes care of the different block encryption modes.      }
+{ --- TDCP_blockcipher - Base Block Cipher Class ----------------------------- }
+{ Extends TDCP_cipher with block cipher modes (ECB, CBC, CFB, OFB, CTR).
+  The Encrypt/Decrypt methods dispatch to the mode selected by CipherMode.
+  Direct mode-specific methods (EncryptCBC, EncryptCTR, etc.) are also available.
+  EncryptString/DecryptString always use CFB 8-bit mode for variable-length data. }
 
 type
-  TDCP_ciphermode= (cmCBC, cmCFB8bit, cmCFBblock, cmOFB, cmCTR); // cmCFB8bit is equal to DCPcrypt v1.xx's CFB mode
-  EDCP_blockcipher= class(EDCP_cipher);
+  { Block cipher chaining modes:
+    cmCBC      - Cipher Block Chaining (default, requires padding to block size)
+    cmCFB8bit  - Cipher Feedback 8-bit (byte-level, compatible with DCPcrypt v1.x)
+    cmCFBblock - Cipher Feedback block-level (faster than CFB 8-bit)
+    cmOFB      - Output Feedback (turns block cipher into stream cipher)
+    cmCTR      - Counter mode (parallelizable, turns block cipher into stream cipher) }
+  TDCP_ciphermode= (cmCBC, cmCFB8bit, cmCFBblock, cmOFB, cmCTR);
+  EDCP_blockcipher= class(EDCP_cipher);  { Exception class for block cipher errors }
   TDCP_blockcipher= class(TDCP_cipher)
   protected
     fCipherMode: TDCP_ciphermode;  { The cipher mode the encrypt method uses  }
@@ -240,15 +254,16 @@ type
   TDCP_blockcipherclass= class of TDCP_blockcipher;
 
 
-{******************************************************************************}
-    { Helper functions }
+{ --- Helper Functions ------------------------------------------------------- }
 
+{ XOR Size bytes of InData2 into InData1 (byte-by-byte). }
 procedure XorBlock(var InData1, InData2; Size: longword);
-// Supposed to be an optimized version of XorBlock() using 32-bit xor
+{ XOR Size bytes of InData2 into InData1 (optimized: 32-bit words, then remaining bytes). }
 procedure XorBlockEx(var InData1, InData2; Size: longword);
-// removes the compiler hint due to first param being 'var' instead of 'out'
+{ Wrapper around FillChar that suppresses compiler hints for var/out mismatch. }
 procedure dcpFillChar(out x; count: SizeInt; Value: Byte); overload;
 procedure dcpFillChar(out x; count: SizeInt; Value: Char); overload;
+{ Fill a memory block with zeros. }
 procedure ZeroMemory(Destination: Pointer; Length: PtrUInt);
 
 
@@ -258,11 +273,11 @@ implementation
 {$Q-}{$R-}
 
 const
-  EncryptBufSize = 1024 * 1024 * 8; // 8 Mo
-  EncryptLimit = 16 * 1024;          // 16 Ko
+  EncryptBufSize = 1024 * 1024 * 8;  { 8 MB - chunk size for stream encryption/decryption }
+  EncryptLimit = 16 * 1024;           { 16 KB - max bytes for PartialEncrypt/DecryptStream }
 
 
-{** TDCP_hash *****************************************************************}
+{ --- TDCP_hash Implementation ----------------------------------------------- }
 
 procedure TDCP_hash.DeadInt(Value: integer);
 begin
@@ -354,7 +369,7 @@ begin
 end;
 
 
-{** TDCP_cipher ***************************************************************}
+{ --- TDCP_cipher Implementation --------------------------------------------- }
 
 procedure TDCP_cipher.DeadInt(Value: integer);
 begin
@@ -409,6 +424,9 @@ begin
     fInitialized:= true;
 end;
 
+{ Derives an encryption key from a passphrase by hashing it with HashType.
+  If the hash digest is larger than MaxKeySize, only MaxKeySize bits are used.
+  The digest buffer is overwritten before being freed (key material cleanup). }
 procedure TDCP_cipher.InitStr(const Key: string; HashType: TDCP_hashclass);
 var
   Hash: TDCP_hash;
@@ -455,6 +473,9 @@ procedure TDCP_cipher.Decrypt(const Indata; var Outdata; Size: longword);
 begin
 end;
 
+{ Encrypts Size bytes from InStream to OutStream in chunks of EncryptBufSize.
+  Returns the total number of bytes processed. Fires OnProgressEvent if assigned.
+  Set CancelByCallingThread to True from another thread to abort early. }
 function TDCP_cipher.EncryptStream(InStream, OutStream: TStream; Size: Int64): longword;
 var
   Buffer: array of byte;
@@ -493,6 +514,9 @@ begin
   SetLength(Buffer, 0);
 end;
 
+{ Decrypts Size bytes from InStream to OutStream in chunks of EncryptBufSize.
+  Returns the total number of bytes processed. Fires OnProgressEvent if assigned.
+  Set CancelByCallingThread to True from another thread to abort early. }
 function TDCP_cipher.DecryptStream(InStream, OutStream: TStream; Size: Int64): longword;
 var
   Buffer: array of byte;
@@ -531,6 +555,9 @@ begin
   SetLength(Buffer, 0);
 end;
 
+{ Encrypts data in-place on a TMemoryStream starting at the current position.
+  At most EncryptLimit (16 KB) bytes are processed regardless of Size.
+  Returns the actual number of bytes encrypted. }
 function TDCP_cipher.PartialEncryptStream(AStream: TMemoryStream; Size: longword): longword;
 var
   p: PByte;
@@ -547,6 +574,9 @@ begin
   Result:= ActualSize;
 end;
 
+{ Decrypts data in-place on a TMemoryStream starting at the current position.
+  At most EncryptLimit (16 KB) bytes are processed regardless of Size.
+  Returns the actual number of bytes decrypted. }
 function TDCP_cipher.PartialDecryptStream(AStream: TMemoryStream; Size: longword): longword;
 var
   p: PByte;
@@ -590,7 +620,7 @@ begin
 end;
 
 
-{** TDCP_blockcipher **********************************************************}
+{ --- TDCP_blockcipher Implementation ---------------------------------------- }
 
 procedure TDCP_blockcipher.InitKey(const Key; Size: longword);
 begin
@@ -614,6 +644,7 @@ procedure TDCP_blockcipher.GetIV(var Value);
 begin
 end;
 
+{ Dispatches to the mode-specific encryption method based on CipherMode. }
 procedure TDCP_blockcipher.Encrypt(const Indata; var Outdata; Size: longword);
 begin
   case fCipherMode of
@@ -625,6 +656,8 @@ begin
   end;
 end;
 
+{ Block cipher string encryption always uses CFB 8-bit mode (not CipherMode)
+  to handle arbitrary-length strings without padding. Result is Base64 encoded. }
 function TDCP_blockcipher.EncryptString(const Str: string): string;
 begin
   SetLength(Result,Length(Str));
@@ -632,12 +665,14 @@ begin
   Result:= Base64EncodeStr(Result);
 end;
 
+{ Decodes the Base64 string, then decrypts using CFB 8-bit mode. }
 function TDCP_blockcipher.DecryptString(const Str: string): string;
 begin
   Result:= Base64DecodeStr(Str);
   DecryptCFB8bit(Result[1],Result[1],Length(Result));
 end;
 
+{ Dispatches to the mode-specific decryption method based on CipherMode. }
 procedure TDCP_blockcipher.Decrypt(const Indata; var Outdata; Size: longword);
 begin
   case fCipherMode of
@@ -704,7 +739,7 @@ begin
 end;
 
 
-{** Helpher functions *********************************************************}
+{ --- Helper Functions ------------------------------------------------------- }
 procedure XorBlock(var InData1, InData2; Size: longword);
 var
   b1: PByteArray;
@@ -736,7 +771,7 @@ begin
   {$HINTS ON}
 end;
 
-// Supposed to be an optimized version of XorBlock() using 32-bit xor
+{ XOR using 32-bit words for bulk, then byte-by-byte for remainder. }
 procedure XorBlockEx(var InData1, InData2; Size: longword);
 var
   l1: PIntegerArray;

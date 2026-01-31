@@ -18,19 +18,22 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst;
 
+{ SHA-512 base class: shared compression for SHA-384 and SHA-512.
+  NIST FIPS 180-2 (2001). Uses 64-bit words and 1024-bit input blocks. }
 type
   TDCP_sha512base= class(TDCP_hash)
   protected
-    LenHi, LenLo: int64;
-    Index: DWord;
-    CurrentHash: array[0..7] of int64;
-    HashBuffer: array[0..127] of byte;
+    LenHi, LenLo: int64;                 { Message length in bits (128-bit counter) }
+    Index: DWord;                         { Current position in HashBuffer }
+    CurrentHash: array[0..7] of int64;    { 512-bit intermediate hash state }
+    HashBuffer: array[0..127] of byte;    { 1024-bit input block buffer }
     procedure Compress;
   public
     procedure Update(const Buffer; Size: longword); override;
     procedure Burn; override;
   end;
 
+  { SHA-384: 384-bit truncated variant of SHA-512. NIST FIPS 180-2. }
   TDCP_sha384= class(TDCP_sha512base)
   public
     class function GetId: integer; override;
@@ -41,6 +44,7 @@ type
     procedure Final(var Digest); override;
   end;
 
+  { SHA-512: 512-bit hash, 1024-bit blocks, 80 rounds. NIST FIPS 180-2. }
   TDCP_sha512= class(TDCP_sha512base)
   public
     class function GetId: integer; override;
@@ -51,8 +55,6 @@ type
     procedure Final(var Digest); override;
   end;
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
@@ -224,7 +226,7 @@ begin
   end;
 end;
 
-{******************************************************************************}
+{ --- TDCP_sha384 --- }
 class function TDCP_sha384.GetAlgorithm: string;
 begin
   Result:= 'SHA384';
@@ -301,7 +303,7 @@ begin
   Burn;
 end;
 
-{******************************************************************************}
+{ --- TDCP_sha512 --- }
 class function TDCP_sha512.GetAlgorithm: string;
 begin
   Result:= 'SHA512';

@@ -19,12 +19,15 @@ uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
 const
-  NUMROUNDS= 20; { number of rounds must be between 16-24 }
+  NUMROUNDS= 20;  { Number of rounds (valid range: 16-24) }
 
+{ RC6: 128-bit block cipher, 8-2040 bit key, variable rounds (here 20).
+  Designed by Rivest, Robshaw, Sidney, Yin (1998). AES finalist.
+  Extends RC5 with four working registers and integer multiplication. }
 type
   TDCP_rc6= class(TDCP_blockcipher128)
   protected
-    KeyData: array[0..((NUMROUNDS*2)+3)] of DWord;
+    KeyData: array[0..((NUMROUNDS*2)+3)] of DWord;  { 2*rounds+4 subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetId: integer; override;
@@ -37,8 +40,6 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

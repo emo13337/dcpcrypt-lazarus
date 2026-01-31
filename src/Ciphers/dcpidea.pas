@@ -18,10 +18,12 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ IDEA: 64-bit block cipher, 128-bit key, 8.5 rounds.
+  Designed by Lai and Massey (1991). Uses modular arithmetic (add, mul, xor). }
 type
   TDCP_idea= class(TDCP_blockcipher64)
   protected
-    EK, DK: array[0..51] of word;
+    EK, DK: array[0..51] of word;  { EK = encryption subkeys, DK = decryption subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -34,8 +36,6 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

@@ -18,10 +18,12 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ CAST-256 (CAST6): 128-bit block cipher, 128-256 bit key, 48 rounds.
+  Designed by C. Adams (1998). AES candidate. Extension of CAST-128. }
 type
   TDCP_cast256= class(TDCP_blockcipher128)
   protected
-    Kr, Km: array[0..11,0..3] of DWord;
+    Kr, Km: array[0..11,0..3] of DWord;  { Rotation and masking subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetId: integer; override;
@@ -34,11 +36,9 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
-{$I DCPcast256.inc}
+{$I DCPcast256.inc}  { S-box constants }
 
 function LRot32(a, n: dword): dword;
 begin

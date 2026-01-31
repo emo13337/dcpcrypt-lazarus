@@ -18,13 +18,15 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst;
 
+{ SHA-256: 256-bit hash, 512-bit blocks, 64 rounds.
+  NIST FIPS 180-2 (2001). Part of the SHA-2 family. }
 type
   TDCP_sha256= class(TDCP_hash)
   protected
-    LenHi, LenLo: longword;
-    Index: DWord;
-    CurrentHash: array[0..7] of DWord;
-    HashBuffer: array[0..63] of byte;
+    LenHi, LenLo: longword;            { Message length in bits (64-bit counter) }
+    Index: DWord;                       { Current position in HashBuffer }
+    CurrentHash: array[0..7] of DWord;  { 256-bit intermediate hash state }
+    HashBuffer: array[0..63] of byte;   { 512-bit input block buffer }
     procedure Compress;
   public
     class function GetId: integer; override;
@@ -37,8 +39,6 @@ type
     procedure Update(const Buffer; Size: longword); override;
   end;
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

@@ -18,13 +18,15 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst;
 
+{ Tiger: 192-bit hash, 512-bit blocks, 24 rounds (3 passes of 8).
+  Designed by Anderson and Biham (1996). Optimized for 64-bit platforms. }
 type
   TDCP_tiger= class(TDCP_hash)
   protected
-    Len: int64;
-    Index: DWord;
-    CurrentHash: array[0..2] of int64;
-    HashBuffer: array[0..63] of byte;
+    Len: int64;                           { Message length in bytes }
+    Index: DWord;                         { Current position in HashBuffer }
+    CurrentHash: array[0..2] of int64;    { 192-bit intermediate hash state }
+    HashBuffer: array[0..63] of byte;     { 512-bit input block buffer }
     procedure Compress;
   public
     class function GetId: integer; override;
@@ -37,12 +39,10 @@ type
     procedure Final(var Digest); override;
   end;
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
-{$INCLUDE DCPtiger.inc}
+{$INCLUDE DCPtiger.inc}  { S-box tables t1..t4 for Tiger hash }
 
 procedure TDCP_tiger.Compress;
 var

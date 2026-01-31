@@ -16,22 +16,27 @@ interface
 uses
   Sysutils;
 
+{ --- Public Functions ------------------------------------------------------- }
+
+{ Encode a string to Base64 format. }
 function Base64EncodeStr(const Value: string): string;
-  { Encode a string into Base64 format }
+{ Decode a Base64 string back to its original value. }
 function Base64DecodeStr(const Value: string): string;
-  { Decode a Base64 format string }
+{ Encode Size bytes from pInput into pOutput (RFC 4648).
+  Output buffer must be at least ((Size + 2) div 3) * 4 bytes.
+  Returns the number of bytes written to pOutput. }
 function Base64Encode(pInput: pointer; pOutput: pointer; Size: longint): longint;
-  { Encode a lump of raw data (output is (4/3) times bigger than input) }
+{ Decode Size bytes of Base64 data from pInput into pOutput.
+  Output buffer must be at least (Size div 4) * 3 bytes.
+  Returns the actual number of decoded bytes (handles '=' padding). }
 function Base64Decode(pInput: pointer; pOutput: pointer; Size: longint): longint;
-  { Decode a lump of raw data }
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$Q-}{$R-}
 
 const
+  { Base64 alphabet: A-Z (0-25), a-z (26-51), 0-9 (52-61), + (62), / (63) }
   B64: array[0..63] of byte= (65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,
     81,82,83,84,85,86,87,88,89,90,97,98,99,100,101,102,103,104,105,106,107,108,
     109,110,111,112,113,114,115,116,117,118,119,120,121,122,48,49,50,51,52,53,

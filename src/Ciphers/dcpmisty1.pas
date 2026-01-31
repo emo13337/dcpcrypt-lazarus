@@ -19,12 +19,14 @@ uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
 const
-  NUMROUNDS= 8;
+  NUMROUNDS= 8;  { Fixed number of rounds for Misty1 }
 
+{ Misty1: 64-bit block cipher, 128-bit key, 8 rounds.
+  Designed by Mitsubishi Electric (1995). CRYPTREC and NESSIE recommended. }
 type
   TDCP_misty1= class(TDCP_blockcipher64)
   protected
-    KeyData: array[0..31] of DWord;
+    KeyData: array[0..31] of DWord;  { Expanded key schedule }
     function FI(const FI_IN, FI_KEY: DWord): DWord;
     function FO(const FO_IN: DWord; const k: longword): DWord;
     function FL(const FL_IN: DWord; const k: longword): DWord;
@@ -41,8 +43,8 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
+
+
 implementation
 {$R-}{$Q-}
 

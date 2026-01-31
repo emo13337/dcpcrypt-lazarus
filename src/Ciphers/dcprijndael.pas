@@ -19,14 +19,16 @@ uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
 const
-  BC= 4;
-  MAXROUNDS= 14;
+  BC= 4;          { Block columns (fixed at 4 for AES = 128-bit block) }
+  MAXROUNDS= 14;  { Maximum rounds (AES-256) }
 
+{ Rijndael (AES): 128-bit block cipher, 128/192/256-bit key, 10/12/14 rounds.
+  Designed by Daemen and Rijmen (1998). FIPS 197. US federal encryption standard. }
 type
   TDCP_rijndael= class(TDCP_blockcipher128)
   protected
-    numrounds: longword;
-    rk, drk: array[0..MAXROUNDS,0..7] of DWord;
+    numrounds: longword;                          { Actual round count: 10, 12, or 14 }
+    rk, drk: array[0..MAXROUNDS,0..7] of DWord;  { rk = encryption round keys, drk = decryption round keys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -39,11 +41,9 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
-{$I DCPrijndael.inc}
+{$I DCPrijndael.inc}  { S-boxes, T-tables, U-tables, rcon for key expansion }
 
 class function TDCP_rijndael.GetMaxKeySize: integer;
 begin

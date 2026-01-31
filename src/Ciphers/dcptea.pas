@@ -18,10 +18,12 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ TEA (Tiny Encryption Algorithm): 64-bit block cipher, 128-bit key, 64 Feistel rounds.
+  Designed by Wheeler and Needham (1994). Simple, fast, minimal code size. }
 type
   TDCP_tea= class(TDCP_blockcipher64)
   protected
-    KeyData: array[0..3] of dword;
+    KeyData: array[0..3] of dword;  { 128-bit key stored as 4 x 32-bit words }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -34,14 +36,12 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
 const
-  Delta: DWord = $9e3779b9;
-  Rounds= 32;
+  Delta: DWord = $9e3779b9;  { Golden ratio derived constant: (sqrt(5)-1) * 2^31 }
+  Rounds= 32;                { 32 cycles = 64 Feistel rounds }
 
 function SwapDword(a: dword): dword;
 begin

@@ -18,13 +18,15 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst;
 
+{ RIPEMD-128: 128-bit hash, 512-bit blocks, 4 rounds with parallel computation.
+  Designed by Dobbertin, Bosselaers, Preneel (1996). ISO/IEC 10118-3. }
 type
   TDCP_ripemd128= class(TDCP_hash)
   protected
-    LenHi, LenLo: longword;
-    Index: DWord;
-    CurrentHash: array[0..3] of DWord;
-    HashBuffer: array[0..63] of byte;
+    LenHi, LenLo: longword;            { Message length in bits (64-bit counter) }
+    Index: DWord;                       { Current position in HashBuffer }
+    CurrentHash: array[0..3] of DWord;  { 128-bit intermediate hash state }
+    HashBuffer: array[0..63] of byte;   { 512-bit input block buffer }
     procedure Compress;
   public
     class function GetId: integer; override;
@@ -39,8 +41,6 @@ type
 
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

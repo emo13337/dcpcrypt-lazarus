@@ -18,13 +18,15 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst;
 
+{ SHA-1: 160-bit hash, 512-bit blocks, 80 rounds in 4 groups.
+  NIST FIPS 180-1 (1995). Used by DCPcrypt for key derivation in InitStr. }
 type
   TDCP_sha1= class(TDCP_hash)
   protected
-    LenHi, LenLo: longword;
-    Index: DWord;
-    CurrentHash: array[0..4] of DWord;
-    HashBuffer: array[0..63] of byte;
+    LenHi, LenLo: longword;            { Message length in bits (64-bit counter) }
+    Index: DWord;                       { Current position in HashBuffer }
+    CurrentHash: array[0..4] of DWord;  { 160-bit intermediate hash state }
+    HashBuffer: array[0..63] of byte;   { 512-bit input block buffer }
     procedure Compress;
   public
     class function GetId: integer; override;
@@ -37,8 +39,6 @@ type
     procedure Update(const Buffer; Size: longword); override;
   end;
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 

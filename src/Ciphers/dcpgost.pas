@@ -21,10 +21,12 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ GOST 28147-89: 64-bit block cipher, 256-bit key, 32-round Feistel network.
+  Soviet/Russian standard. See WARNING in file header about compatibility. }
 type
   TDCP_gost= class(TDCP_blockcipher64)
   protected
-    KeyData: array[0..7] of DWord;
+    KeyData: array[0..7] of DWord;  { Eight 32-bit subkeys }
     procedure InitKey(const Key; Size: longword); override;
   public
     class function GetID: integer; override;
@@ -37,11 +39,9 @@ type
   end;
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
-{$I DCPgost.inc}
+{$I DCPgost.inc}  { S-box substitution tables }
 
 class function TDCP_gost.GetMaxKeySize: integer;
 begin

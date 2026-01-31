@@ -18,11 +18,13 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst, DCPblockciphers;
 
+{ Base class for ICE cipher variants: standard ICE, Thin ICE, and ICE-2.
+  ICE: 64-bit block cipher designed by Matthew Kwan (1997). Patent-free. }
 type
   TDCP_customice= class(TDCP_blockcipher64)
   protected
-    rounds: dword;
-    ik_keysched: array[0..31,0..2] of dword;
+    rounds: dword;                              { Number of rounds (varies by variant) }
+    ik_keysched: array[0..31,0..2] of dword;    { Expanded key schedule }
     function f(p, sk: dword): dword;
     procedure key_sched_build(kb: pwordarray; n: dword; keyrot: pdwordarray);
     procedure InitIce(const Key; Size: longword; n: dword);
@@ -33,6 +35,7 @@ type
     constructor Create(AOwner: TComponent); override;
   end;
 
+  { Standard ICE: 64-bit block, 64-bit key, 16 rounds. }
   TDCP_ice= class(TDCP_customice)
   protected
     procedure InitKey(const Key; Size: longword); override;
@@ -43,6 +46,7 @@ type
     class function SelfTest: boolean; override;
   end;
 
+  { Thin ICE: reduced variant, 64-bit block, 64-bit key, 8 rounds. }
   TDCP_thinice= class(TDCP_customice)
   protected
     procedure InitKey(const Key; Size: longword); override;
@@ -53,6 +57,7 @@ type
     class function SelfTest: boolean; override;
   end;
 
+  { ICE-2: enhanced variant, 64-bit block, 128-bit key, 32 rounds. }
   TDCP_ice2= class(TDCP_customice)
   protected
     procedure InitKey(const Key; Size: longword); override;
@@ -63,8 +68,6 @@ type
     class function SelfTest: boolean; override;
   end;
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
@@ -101,7 +104,6 @@ begin
   Result:= ((a and $FF) shl 24) or ((a and $FF00) shl 8) or ((a and $FF0000) shr 8) or ((a and $FF000000) shr 24);
 end;
 
-{******************************************************************************}
 function gf_mult(a, b, m: dword): dword;
 var
   res: dword;
@@ -302,7 +304,7 @@ begin
   end;
 end;
 
-{******************************************************************************}
+{ --- TDCP_ice --- }
 class function TDCP_ice.GetMaxKeySize: integer;
 begin
   Result:= 64;
@@ -344,7 +346,7 @@ begin
   InitIce(Key,Size,1);
 end;
 
-{******************************************************************************}
+{ --- TDCP_thinice --- }
 class function TDCP_thinice.GetMaxKeySize: integer;
 begin
   Result:= 64;
@@ -386,7 +388,7 @@ begin
   InitIce(Key,Size,0);
 end;
 
-{******************************************************************************}
+{ --- TDCP_ice2 --- }
 class function TDCP_ice2.GetMaxKeySize: integer;
 begin
   Result:= 128;

@@ -18,13 +18,15 @@ interface
 uses
   Classes, Sysutils, DCPcrypt2, DCPconst;
 
+{ Haval: configurable hash, 128/160/192/224/256-bit digest, 3/4/5 passes.
+  Designed by Zheng, Pieprzyk, Seberry (1992). 1024-bit input blocks. }
 type
   TDCP_haval= class(TDCP_hash)
   protected
-    LenHi, LenLo: longword;
-    Index: DWord;
-    CurrentHash: array[0..7] of DWord;
-    HashBuffer: array[0..127] of byte;
+    LenHi, LenLo: longword;            { Message length in bits (64-bit counter) }
+    Index: DWord;                       { Current position in HashBuffer }
+    CurrentHash: array[0..7] of DWord;  { 256-bit intermediate hash state }
+    HashBuffer: array[0..127] of byte;  { 1024-bit input block buffer }
     procedure Compress;
   public
     class function GetId: integer; override;
@@ -52,8 +54,6 @@ type
 {$DEFINE DIGEST256}
 
 
-{******************************************************************************}
-{******************************************************************************}
 implementation
 {$R-}{$Q-}
 
