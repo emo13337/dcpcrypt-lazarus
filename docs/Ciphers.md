@@ -1,6 +1,6 @@
 # Ciphers - TDCP_cipher
 
-**DCPcrypt Cryptographic Component Library v2.0.5**
+**DCPcrypt Cryptographic Component Library v2.0.6**
 Lazarus / Free Pascal edition
 
 All ciphers are inherited from the TDCP_cipher component either directly for stream ciphers (such as RC4) or via the TDCP_blockcipher component.

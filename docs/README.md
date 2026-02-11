@@ -1,4 +1,4 @@
-# DCPcrypt Cryptographic Component Library v2.0.5
+# DCPcrypt Cryptographic Component Library v2.0.6
 
 **Lazarus / Free Pascal edition**
 Originally written by David Barton
@@ -14,6 +14,12 @@ DCPcrypt is open source software released under the [MIT license](../src/Docs/MI
 This software is OSI Certified Open Source Software. OSI Certified is a certification mark of the [Open Source Initiative](http://www.opensource.org/).
 
 ## What's New
+
+**Changes in v2.0.6** by Nicolas Deoux (2026):
+
+- Added console demo: `demo_hash_large_file` - Large file hashing (>5 GB) with real-time progress, manual `Hash.Update()` loop with 64 KB blocks, `--size=N` and `--dir=path` options
+- Added `{$MODE Delphi}` to `dcpbase64.pas` and `dcpconst.pas` (all units now have explicit mode directives)
+- Switched all examples (console + GUI) to `{$MODE ObjFPC}{$H+}` (no `-Mdelphi` flag needed)
 
 **Changes in v2.0.5** by Nicolas Deoux (2026):
 
@@ -52,7 +58,7 @@ Ported to Lazarus by Barko in 2006.
 
 | | |
 |---|---|
-| **Console examples** | `examples/console/` - String and file encryption tests |
+| **Console examples** | `examples/console/` - String/file encryption, file hashing demos |
 | **GUI examples** | `examples/gui/EncryptStrings/` - String encryption with EncryptStream |
 | | `examples/gui/FileEncrypt/` - File encryption with thread support |
 | | Build with: `lazbuild <project>.lpi` |
@@ -164,7 +170,7 @@ DCPcrypt contains the following ciphers and hash algorithms:
 | Barko | Lazarus port (2006) |
 | Graeme Geldenhuys | Package split, 64-bit support (2009-2010) |
 | Werner Pamler | Large file hash fix (2022) |
-| Nicolas Deoux | GUI examples VCL→LCL port, console demos, test suite, Makefile, docs (2026) - NDXDev@gmail.com |
+| Nicolas Deoux | GUI examples VCL→LCL port, console demos, large-file hashing demo, test suite, Makefile, docs (2026) - NDXDev@gmail.com |
 
 ---
 

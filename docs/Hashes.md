@@ -1,6 +1,6 @@
 # Hash Algorithms - TDCP_hash
 
-**DCPcrypt Cryptographic Component Library v2.0.5**
+**DCPcrypt Cryptographic Component Library v2.0.6**
 Lazarus / Free Pascal edition
 
 All hashes are derived from the TDCP_hash component. It provides a range of functions to allow the hashing of virtually every type of data.

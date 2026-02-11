@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0.6 - Nicolas Deoux (2026)
+
+NDXDev@gmail.com
+https://www.linkedin.com/in/nicolas-deoux-ab295980/
+
+- Version number bumped to 2.0.6
+- Added console demo example:
+  - `examples/console/demo_hash_large_file.lpr`: Large file hashing (>5 GB) with real-time progress (%, MB/s, elapsed time), manual `Hash.Update()` loop with 64 KB blocks to avoid `UpdateStream` integer overflow, `--size=N` and `--dir=path` options, robust error handling
+- Added `{$MODE Delphi}` directive to `dcpbase64.pas` and `dcpconst.pas` (were the only units missing it, making `-Mdelphi` command-line flag no longer required)
+- Switched all 4 console examples from `{$MODE Delphi}` to `{$MODE ObjFPC}{$H+}`
+- Switched all GUI example files from `{$MODE Delphi}` to `{$MODE ObjFPC}{$H+}`
+- Removed `-Mdelphi` from Makefile example build flags
+
 ## v2.0.5 - Nicolas Deoux (2026)
 
 NDXDev@gmail.com

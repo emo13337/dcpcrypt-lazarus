@@ -1,6 +1,6 @@
 # Block Ciphers - TDCP_blockcipher
 
-**DCPcrypt Cryptographic Component Library v2.0.5**
+**DCPcrypt Cryptographic Component Library v2.0.6**
 Lazarus / Free Pascal edition
 
 All block ciphers are inherited from the TDCP_blockcipher component via either the TDCP_blockcipher64 and TDCP_blockcipher128 components (the latter implement the block size specific code).
