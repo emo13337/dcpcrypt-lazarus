@@ -1,5 +1,5 @@
 {===============================================================================
-  DCPcrypt v2.0.5 - A binary compatible implementation of DES and Triple DES
+  DCPcrypt v2.0.6 - A binary compatible implementation of DES and Triple DES
 
   Based on C implementation by Eric Young (eay@mincom.oz.au).
   DES takes a 64-bit key and discards every 8th bit (56-bit effectively).

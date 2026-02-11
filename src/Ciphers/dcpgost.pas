@@ -1,5 +1,5 @@
 {===============================================================================
-  DCPcrypt v2.0.5 - A binary compatible implementation of Gost
+  DCPcrypt v2.0.6 - A binary compatible implementation of Gost
 
   WARNING: Compatibility with the actual GOST standard is uncertain.
   Use this implementation with extreme caution.

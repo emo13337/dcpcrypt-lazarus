@@ -1,5 +1,5 @@
 {===============================================================================
-  DCPcrypt v2.0.5 - A binary compatible implementation of Serpent
+  DCPcrypt v2.0.6 - A binary compatible implementation of Serpent
 
   Based on C source by Brian Gladman (gladman@seven77.demon.co.uk).
   Initial Delphi translation by Bruce Christensen.

@@ -1,5 +1,5 @@
 {===============================================================================
-  DCPcrypt v2.0.5 - A binary compatible implementation of Ice and its variants
+  DCPcrypt v2.0.6 - A binary compatible implementation of Ice and its variants
 
   SPDX-License-Identifier: MIT
   See LICENSE for full license text.
