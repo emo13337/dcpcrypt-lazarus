@@ -10,7 +10,7 @@
 {******************************************************************************}
 unit uMain;
 
-{$MODE Delphi}
+{$MODE ObjFPC}{$H+}
 
 interface
 
@@ -188,7 +188,7 @@ begin
   Result := True;
   strmInput := nil;
   strmOutput := nil;
-  Cipher.OnProgressEvent := Pourcentage;
+  Cipher.OnProgressEvent := @Pourcentage;
   try
     strmInput := TStringStream.Create(Memo1.Text);
     strmOutput := TStringStream.Create('');

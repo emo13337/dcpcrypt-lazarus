@@ -1,6 +1,6 @@
 program EncryptStringsViaEncryptStream;
 
-{$MODE Delphi}
+{$MODE ObjFPC}{$H+}
 
 uses
   {$IFDEF UNIX}
