@@ -80,7 +80,7 @@ jobs:
             Add `src/`, `src/Ciphers/` and `src/Hashes/` to your project unit search paths:
 
             ```bash
-            fpc -Mdelphi -Fupath/to/dcpcrypt-lazarus/src -Fupath/to/dcpcrypt-lazarus/src/Ciphers -Fupath/to/dcpcrypt-lazarus/src/Hashes myprogram.pas
+            fpc -Fupath/to/dcpcrypt-lazarus/src -Fupath/to/dcpcrypt-lazarus/src/Ciphers -Fupath/to/dcpcrypt-lazarus/src/Hashes myprogram.pas
             ```
 
             ### Quick Example
