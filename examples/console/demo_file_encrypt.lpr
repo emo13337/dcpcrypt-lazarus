@@ -5,7 +5,7 @@
 {******************************************************************************}
 program demo_file_encrypt;
 
-{$MODE Delphi}
+{$MODE ObjFPC}{$H+}
 
 uses
   Classes, SysUtils,
@@ -70,7 +70,7 @@ begin
       Cipher.Init(HashDigest[0], Min(Cipher.MaxKeySize, Hash.HashSize), nil);
 
     ProgressHelper.LastProgress := -10;
-    Cipher.OnProgressEvent := ProgressHelper.OnProgress;
+    Cipher.OnProgressEvent := @ProgressHelper.OnProgress;
     Cipher.EncryptStream(strmInput, strmOutput, strmInput.Size);
     Cipher.Burn;
   finally
@@ -111,7 +111,7 @@ begin
       Cipher.Init(HashDigest[0], Min(Cipher.MaxKeySize, Hash.HashSize), nil);
 
     ProgressHelper.LastProgress := -10;
-    Cipher.OnProgressEvent := ProgressHelper.OnProgress;
+    Cipher.OnProgressEvent := @ProgressHelper.OnProgress;
     Cipher.DecryptStream(strmInput, strmOutput, strmInput.Size - strmInput.Position);
     Cipher.Burn;
   finally

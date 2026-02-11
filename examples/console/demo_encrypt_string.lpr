@@ -5,7 +5,7 @@
 {******************************************************************************}
 program demo_encrypt_string;
 
-{$MODE Delphi}
+{$MODE ObjFPC}{$H+}
 
 uses
   Classes, SysUtils,
