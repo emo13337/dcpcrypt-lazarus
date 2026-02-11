@@ -53,7 +53,7 @@ Open `src/dcpcrypt.lpk` (runtime) and `src/dcpcrypt_laz.lpk` (design-time) in th
 
 Add the source paths to your project:
 ```
--Mdelphi -Fupath/to/dcpcrypt-lazarus/src -Fupath/to/dcpcrypt-lazarus/src/Ciphers -Fupath/to/dcpcrypt-lazarus/src/Hashes
+-Fupath/to/dcpcrypt-lazarus/src -Fupath/to/dcpcrypt-lazarus/src/Ciphers -Fupath/to/dcpcrypt-lazarus/src/Hashes
 ```
 
 ### Basic Usage
@@ -61,7 +61,7 @@ Add the source paths to your project:
 ```pascal
 program QuickDemo;
 
-{$mode Delphi}
+{$MODE ObjFPC}{$H+}
 
 uses
   DCPrijndael, DCPsha256, DCPcrypt2;
@@ -93,7 +93,7 @@ end.
 
 Compile with:
 ```bash
-fpc -Mdelphi -Fusrc -Fusrc/Ciphers -Fusrc/Hashes quickdemo.lpr
+fpc -Fusrc -Fusrc/Ciphers -Fusrc/Hashes quickdemo.lpr
 ```
 
 ---
@@ -162,10 +162,12 @@ fpc -Mdelphi -Fusrc -Fusrc/Ciphers -Fusrc/Hashes quickdemo.lpr
 |---------|-------------|
 | `demo_encrypt_string` | Salt+IV string encryption/decryption |
 | `demo_file_encrypt` | File encryption with progress callback |
+| `demo_hash_file` | Hash files using all 10 hash algorithms |
+| `demo_hash_large_file` | Hash large files (>5 GB) with real-time progress (`--size=N`, `--dir=path`) |
 
 ```bash
 cd examples/console
-fpc -Mdelphi -Fusrc -Fusrc/Ciphers -Fusrc/Hashes demo_encrypt_string.lpr
+fpc -Fusrc -Fusrc/Ciphers -Fusrc/Hashes demo_encrypt_string.lpr
 ./demo_encrypt_string
 ```
 
@@ -226,7 +228,7 @@ dcpcrypt-lazarus/
 │   └── dcpcrypt_laz.lpk    # Design-time package
 ├── tests/                  # Functional test suite (282 tests)
 ├── examples/               # Console and GUI examples
-│   ├── console/            # 2 console demos
+│   ├── console/            # 4 console demos
 │   └── gui/                # 2 GUI examples (LCL)
 ├── docs/                   # Markdown documentation
 ├── .github/workflows/      # CI/CD configuration
@@ -274,11 +276,11 @@ MIT License - See [LICENSE](src/Docs/MIT_license.txt) for details.
 | Barko | Lazarus port (2006) |
 | Graeme Geldenhuys | Package split, 64-bit support (2009-2010) |
 | Werner Pamler | Large file hash fix (2022) |
-| Nicolas Deoux | GUI examples VCL-to-LCL port, console demos, test suite, Makefile, CI/CD, docs (2026) |
+| Nicolas Deoux | GUI examples VCL-to-LCL port, console demos, large-file hashing demo, test suite, Makefile, CI/CD, docs (2026) |
 
 ---
 
-## Author (v2.0.5)
+## Author (v2.0.6)
 
 **Nicolas DEOUX**
 
@@ -300,6 +302,6 @@ MIT License - See [LICENSE](src/Docs/MIT_license.txt) for details.
 
 **[Back to top](#dcpcrypt)**
 
-*Last updated: January 2026 | FPC 3.2.0+*
+*Last updated: February 2026 | FPC 3.2.0+*
 
 </div>

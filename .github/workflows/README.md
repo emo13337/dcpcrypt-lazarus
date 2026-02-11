@@ -97,6 +97,8 @@ flowchart TD
 |---------|------|------------|
 | `demo_encrypt_string` | Console | `fpc` |
 | `demo_file_encrypt` | Console | `fpc` |
+| `demo_hash_file` | Console | `fpc` |
+| `demo_hash_large_file` | Console | `fpc` |
 | `EncryptStringsViaEncryptStream` | GUI (LCL) | `lazbuild` |
 | `EncryptFileUsingThread` | GUI (LCL) | `lazbuild` |
 
@@ -130,8 +132,8 @@ Source: [ChrisWiGit/lazarus-docker](https://github.com/ChrisWiGit/lazarus-docker
 Releases are created automatically when pushing version tags:
 
 ```bash
-git tag v2.0.5
-git push origin v2.0.5
+git tag v2.0.6
+git push origin v2.0.6
 ```
 
 ## Local Testing
@@ -151,7 +153,7 @@ Or manually:
 
 ```bash
 # Build
-fpc -Mdelphi -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests tests/test_hashes.lpr
+fpc -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests tests/test_hashes.lpr
 
 # Run
 tests/test_hashes
@@ -163,7 +165,7 @@ tests/test_hashes
 
 | Issue | Solution |
 |-------|----------|
-| `Identifier not found: Result` | Ensure `-Mdelphi` flag is used (dcpbase64.pas requires Delphi mode) |
+| `Identifier not found: Result` | Add `{$MODE Delphi}` or `{$MODE ObjFPC}{$H+}` at the top of your unit |
 | GTK2 not found (GUI examples) | Install `libgtk2.0-dev` locally |
 
 ### Test Failures

@@ -1,6 +1,6 @@
 # DCPcrypt Documentation
 
-**Version 2.0.5** | **License:** MIT
+**Version 2.0.6** | **License:** MIT
 
 ---
 
@@ -38,7 +38,7 @@
 
 ### Version History
 
-- [Changelog](docs/CHANGELOG.md) - All versions from v2.0.4 to v2.0.5
+- [Changelog](docs/CHANGELOG.md) - All versions from v2.0.4 to v2.0.6
 
 ### CI/CD
 
@@ -46,12 +46,14 @@
 
 ### Examples
 
-4 examples covering common encryption scenarios:
+6 examples covering common cryptographic scenarios:
 
 | Example | Type | Description |
 |---------|------|-------------|
 | [demo_encrypt_string](examples/console/demo_encrypt_string.lpr) | Console | Salt+IV string encryption/decryption |
 | [demo_file_encrypt](examples/console/demo_file_encrypt.lpr) | Console | File encryption with progress callback |
+| [demo_hash_file](examples/console/demo_hash_file.lpr) | Console | Hash files using all 10 hash algorithms |
+| [demo_hash_large_file](examples/console/demo_hash_large_file.lpr) | Console | Hash large files (>5 GB) with real-time progress (`--size=N`, `--dir=path`) |
 | [EncryptStrings](examples/gui/EncryptStrings/) | GUI (LCL) | String encryption using EncryptStream |
 | [FileEncrypt](examples/gui/FileEncrypt/) | GUI (LCL) | File encryption with thread support |
 

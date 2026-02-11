@@ -53,7 +53,7 @@ git remote add upstream https://github.com/ORIGINAL_OWNER/dcpcrypt-lazarus.git
 make test
 
 # Or manually
-fpc -Mdelphi -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests tests/test_hashes.lpr
+fpc -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests tests/test_hashes.lpr
 tests/test_hashes
 ```
 
@@ -82,7 +82,7 @@ dcpcrypt-lazarus/
 │   ├── testutils.pas       # Shared test utilities
 │   └── test_*.lpr          # 5 test programs
 ├── examples/               # Working examples (update as needed)
-│   ├── console/            # 2 console demos
+│   ├── console/            # 4 console demos
 │   └── gui/                # 2 GUI examples
 └── docs/                   # Documentation
 ```
@@ -91,10 +91,10 @@ dcpcrypt-lazarus/
 
 ```bash
 # Build a specific test
-fpc -Mdelphi -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests tests/test_hashes.lpr
+fpc -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests tests/test_hashes.lpr
 
 # Build a console example
-fpc -Mdelphi -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes examples/console/demo_encrypt_string.lpr
+fpc -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes examples/console/demo_encrypt_string.lpr
 
 # Build a GUI example
 lazbuild examples/gui/EncryptStrings/EncryptStringsViaEncryptStream.lpi
@@ -106,7 +106,7 @@ lazbuild examples/gui/EncryptStrings/EncryptStringsViaEncryptStream.lpi
 
 ### Pascal Style Guide
 
-DCPcrypt uses **Delphi syntax mode** (`{$MODE Delphi}` or `-Mdelphi` flag).
+All source units use `{$MODE Delphi}` directives. Examples use `{$MODE ObjFPC}{$H+}`. No `-Mdelphi` command-line flag is needed.
 
 #### Naming Conventions
 
@@ -274,7 +274,7 @@ test(hash): add SHA-256 known-answer tests from NIST
    ```bash
    make clean-examples
    # Verify affected examples compile
-   fpc -Mdelphi -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes examples/console/demo_encrypt_string.lpr
+   fpc -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes examples/console/demo_encrypt_string.lpr
    ```
 
 4. **Update documentation** if adding/changing public API

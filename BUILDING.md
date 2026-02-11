@@ -68,11 +68,11 @@ Build tests directly with the Free Pascal Compiler:
 # Build a test program
 fpc -Mdelphi -FEtests -Fusrc -Fusrc/Ciphers -Fusrc/Hashes -Futests tests/test_hashes.lpr
 
-# Build a console example
-fpc -Mdelphi -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes examples/console/demo_encrypt_string.lpr
+# Build a console example (no -Mdelphi needed, examples use {$MODE ObjFPC})
+fpc -FEexamples/console -Fusrc -Fusrc/Ciphers -Fusrc/Hashes examples/console/demo_encrypt_string.lpr
 ```
 
-**Important:** The `-Mdelphi` flag is required because `dcpbase64.pas` uses Delphi-style `Result` syntax without an explicit `{$MODE Delphi}` directive.
+**Note:** The `-Mdelphi` flag is not required: all source units and examples have explicit `{$MODE}` directives.
 
 ### Using Lazarus IDE
 
@@ -94,7 +94,6 @@ lazbuild examples/gui/FileEncrypt/EncryptFileUsingThread.lpi
 
 | Flag | Purpose |
 |------|---------|
-| `-Mdelphi` | Required: Delphi compatibility mode |
 | `-Fusrc` | Unit search path: core units |
 | `-Fusrc/Ciphers` | Unit search path: cipher implementations |
 | `-Fusrc/Hashes` | Unit search path: hash implementations |
@@ -168,9 +167,10 @@ See [.github/workflows/README.md](.github/workflows/README.md) for details.
 
 ### "Identifier not found: Result"
 
-The `-Mdelphi` compiler flag is missing. Add it to your fpc command:
-```bash
-fpc -Mdelphi ...
+Your source file is missing a `{$MODE}` directive. Add one of these at the top of your unit:
+```pascal
+{$MODE Delphi}    // or
+{$MODE ObjFPC}{$H+}
 ```
 
 ### GUI examples fail to compile on Linux

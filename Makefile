@@ -15,13 +15,13 @@ SRCDIR := src
 TESTDIR := tests
 EXDIR := examples
 FPCFLAGS := -Mdelphi -FE$(TESTDIR) -Fu$(SRCDIR) -Fu$(SRCDIR)/Ciphers -Fu$(SRCDIR)/Hashes -Fu$(TESTDIR)
-FPCFLAGS_EX := -Mdelphi -Fu$(SRCDIR) -Fu$(SRCDIR)/Ciphers -Fu$(SRCDIR)/Hashes
+FPCFLAGS_EX := -Fu$(SRCDIR) -Fu$(SRCDIR)/Ciphers -Fu$(SRCDIR)/Hashes
 
 # Test programs
 TESTS := test_hashes test_ciphers test_block_modes test_base64 test_stream_encrypt
 
 # Console examples
-CONSOLE_EXAMPLES := demo_encrypt_string demo_file_encrypt
+CONSOLE_EXAMPLES := demo_encrypt_string demo_file_encrypt demo_hash_file demo_hash_large_file
 
 # GUI examples
 GUI_EXAMPLES := \
@@ -231,7 +231,9 @@ clean:
 clean-examples:
 	@echo "Cleaning examples/..."
 	@rm -f $(EXDIR)/console/demo_encrypt_string $(EXDIR)/console/demo_encrypt_string.exe \
-		$(EXDIR)/console/demo_file_encrypt $(EXDIR)/console/demo_file_encrypt.exe 2>/dev/null || true
+		$(EXDIR)/console/demo_file_encrypt $(EXDIR)/console/demo_file_encrypt.exe \
+		$(EXDIR)/console/demo_hash_file $(EXDIR)/console/demo_hash_file.exe \
+		$(EXDIR)/console/demo_hash_large_file $(EXDIR)/console/demo_hash_large_file.exe 2>/dev/null || true
 	@rm -f $(EXDIR)/gui/EncryptStrings/EncryptStringsViaEncryptStream \
 		$(EXDIR)/gui/EncryptStrings/EncryptStringsViaEncryptStream.exe \
 		$(EXDIR)/gui/FileEncrypt/EncryptFileUsingThread \
